@@ -11,7 +11,7 @@ export const validateData =
       if (error instanceof ZodError) {
         const zodErrorMessage = z.flattenError(error);
 
-        return res.status(404).send({
+        return res.status(400).send({
           error: 'Invalid data',
           details: zodErrorMessage.fieldErrors,
         });
