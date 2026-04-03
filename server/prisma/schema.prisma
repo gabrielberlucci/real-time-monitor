@@ -11,3 +11,33 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model User {
+  id       String @id @default(uuid())
+  email    String @unique
+  name     String
+  password String
+  urls     Url[]
+}
+
+model Url {
+  id      Int    @id @default(autoincrement())
+  urlLink String
+
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String?
+
+  logs Logs[]
+}
+
+model Logs {
+  id        Int      @id @default(autoincrement())
+  urlStatus Int
+  timestamp DateTime @default(now())
+  latency   Int
+
+  url   Url @relation(fields: [urlId], references: [id])
+  urlId Int
+
+  @@index([urlId, timestamp])
+}
