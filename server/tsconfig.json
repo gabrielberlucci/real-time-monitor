@@ -48,7 +48,8 @@
     // Typescript path to project files
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/lib/*": ["./lib/*"]
     }
   }
 }
