@@ -14,8 +14,6 @@ export const authMiddleware = (
 ) => {
   const cookies = req.cookies;
 
-  console.log(cookies);
-
   if (!cookies.access_token) {
     return res.status(401).send({
       message: 'Access Denied. No token provided',
@@ -35,7 +33,6 @@ export const authMiddleware = (
       });
     }
 
-    console.log(error);
     res.status(500).send({
       error: 'Server internal error',
     });
