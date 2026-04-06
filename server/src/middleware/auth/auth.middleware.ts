@@ -1,11 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-
-interface TokenPayload {
-  id: string;
-  email: string;
-  name: string;
-}
+import type { User } from 'generated/prisma/client';
 
 export const authMiddleware = (
   req: Request,
@@ -22,10 +17,9 @@ export const authMiddleware = (
   try {
     const token = cookies.access_token;
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as User;
 
-    //TODO: make a decent type for this!!!
-    (req as any).user = decoded;
+    req.user = decoded;
   } catch (error) {
     if (error instanceof jwt.JsonWebTokenError) {
       return res.status(401).send({
