@@ -20,6 +20,7 @@ export const authMiddleware = (
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as User;
 
     req.user = decoded;
+    next();
   } catch (error) {
     if (error instanceof jwt.JsonWebTokenError) {
       return res.status(401).send({
