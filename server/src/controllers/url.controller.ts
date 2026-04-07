@@ -4,9 +4,7 @@ import type { Request, Response } from 'express';
 export const url = async (req: Request, res: Response) => {
   try {
     const urlData = req.body;
-    const userId = req.user?.id;
-
-    console.log(userId);
+    const userId = req.user.id;
 
     const url = await createUrl(urlData.urlLink, userId!);
 
@@ -15,8 +13,6 @@ export const url = async (req: Request, res: Response) => {
       urlData: url,
     });
   } catch (error) {
-    console.log(error);
-
     res.status(500).send({
       message: 'Internal server error',
     });
