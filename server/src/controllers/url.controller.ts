@@ -6,7 +6,7 @@ export const url = async (req: Request, res: Response) => {
     const urlData = req.body;
     const userId = req.user.id;
 
-    const url = await createUrl(urlData.urlLink, userId!);
+    const url = await createUrl(urlData.urlLink, userId);
 
     res.status(200).send({
       message: 'Url created with success',
