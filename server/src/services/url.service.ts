@@ -8,6 +8,10 @@ export const createUrl = async (url: string, userId: string) => {
         urlLink: url,
         userId: userId,
       },
+
+      select: {
+        urlLink: true,
+      },
     });
 
     return urlData;
