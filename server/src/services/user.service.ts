@@ -60,7 +60,7 @@ export const logUser = async (userData: User) => {
       name: result.name,
     };
     if (match) {
-      const token = jwt.sign(payload, process.env.JWT_SECRET as string, {
+      const token = jwt.sign(payload, process.env.JWT_SECRET, {
         expiresIn: '1h',
       });
 

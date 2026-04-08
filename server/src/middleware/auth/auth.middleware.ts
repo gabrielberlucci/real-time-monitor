@@ -17,7 +17,7 @@ export const authMiddleware = (
   try {
     const token = cookies.access_token;
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as User;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as User;
 
     req.user = decoded;
     next();
