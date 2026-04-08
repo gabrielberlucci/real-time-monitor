@@ -1,3 +1,4 @@
+import { FreePlanError } from '@/error/FreePlanError';
 import { createUrl } from '@/services/url.service';
 import type { Request, Response } from 'express';
 
@@ -13,6 +14,13 @@ export const url = async (req: Request, res: Response) => {
       urlData: url,
     });
   } catch (error) {
+    if (error instanceof FreePlanError) {
+      return res.status(403).send({
+        errorName: error.name,
+        error: error.message,
+      });
+    }
+
     res.status(500).send({
       message: 'Internal server error',
     });
