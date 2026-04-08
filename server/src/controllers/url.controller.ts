@@ -15,7 +15,7 @@ export const url = async (req: Request, res: Response) => {
     });
   } catch (error) {
     if (error instanceof FreePlanError) {
-      return res.status(403).send({
+      return res.status(error.statusCode).send({
         errorName: error.name,
         error: error.message,
       });
