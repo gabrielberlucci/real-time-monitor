@@ -1,8 +1,16 @@
+import { FreePlanError } from '@/error/FreePlanError';
 import { prisma } from '@/lib/prisma';
-import type { Url } from 'generated/prisma/client';
 
 export const createUrl = async (url: string, userId: string) => {
   try {
+    const totalUserUrl = await prisma.url.count({
+      where: { userId: userId },
+    });
+
+    if (totalUserUrl >= 5) {
+      throw new FreePlanError('Free plan limit reached');
+    }
+
     const urlData = prisma.url.create({
       data: {
         urlLink: url,
