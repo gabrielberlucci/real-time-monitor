@@ -3,7 +3,7 @@ import { Queue } from 'bullmq';
 const pingQueue = new Queue('verify-uptime', {
   connection: {
     host: process.env.REDIS_URL,
-    port: process.env.REDIS_PORT || 6490,
+    port: process.env.REDIS_PORT,
   },
 });
 
