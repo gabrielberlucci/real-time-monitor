@@ -1,14 +1,16 @@
 import { Worker } from 'bullmq';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+import { workerPrisma } from './lib/prisma';
 
 const pingWorker = new Worker(
   'verify-uptime',
   async (job) => {
     const { urlId, urlLink } = job.data;
 
-    console.log(
-      `[Worker] Iniciando o teste da URL: ${urlLink} At: ${Date()} urlId: ${urlId}`,
-    );
+    //TODO: move this to a logger
+    // console.log(
+    //   `[Worker] Iniciando o teste da URL: ${urlLink} At: ${Date()} urlId: ${urlId}`,
+    // );
 
     const start = performance.now();
 
@@ -22,11 +24,31 @@ const pingWorker = new Worker(
       const requestStatus = result.status;
       const statusText = result.statusText;
 
-      console.log(duration);
-      console.log(requestStatus);
-      console.log(statusText);
+      await workerPrisma.logs.create({
+        data: {
+          urlStatus: requestStatus,
+          latency: duration,
+          urlText: statusText,
+          urlId: urlId,
+        },
+      });
     } catch (error) {
-      console.log(error);
+      //TODO: this is stupid af, but it works for now (please, refactor this!!!)
+      let finalError: string = '';
+      if (error instanceof AxiosError) {
+        finalError = error.code!;
+      }
+
+      const duration = Math.round(performance.now() - start);
+
+      await workerPrisma.logs.create({
+        data: {
+          urlStatus: 0,
+          latency: duration,
+          urlText: finalError,
+          urlId: urlId,
+        },
+      });
     }
   },
   {
@@ -34,5 +56,17 @@ const pingWorker = new Worker(
       host: process.env.REDIS_URL,
       port: process.env.REDIS_PORT,
     },
+    limiter: {
+      duration: 5000,
+      max: 50,
+    },
   },
 );
+
+//TODO: move this to a logger
+pingWorker.on('failed', (job, err) => {
+  console.error(
+    `[Worker] O job da URL ${job?.data.urlId} falhou:`,
+    err.message,
+  );
+});
